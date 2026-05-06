@@ -4,7 +4,8 @@ from datetime import datetime
 
 
 class Store:
-    pass
+    def __init__(self, brand_id: int):
+        self.brand_id = brand_id
 
 class Brand:
     def __init__(self, id: int, name: str, is_active: bool):
