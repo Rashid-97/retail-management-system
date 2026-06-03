@@ -2,36 +2,44 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from app.core.exceptions import DomainValidationError
+
 
 class Store:
     def __init__(self, brand_id: int):
         self.brand_id = brand_id
 
 class Brand:
-    def __init__(self, id: int, name: str, is_active: bool):
+    def __init__(self, name: str, subcompany_id: int, is_active: bool, id: int = None):
         self.id = id
         self.name = name
+        self.subcompany_id = subcompany_id
         self.is_active = is_active
 
 class SubCompany:
-    def __init__(self, id: int, name: str, brands_list: list[Brand], is_active: bool):
-        self.id = id
+    def __init__(self, name: str, is_active: bool, brands_list: list[Brand] = None, id: int = None):
         self.name = name
-        self.brands_list = brands_list
         self.is_active = is_active
+        self.brands_list = brands_list
+        self.id = id
 
 class Branch:
-    def __int__(self, id: int, brand_id: int, name: str, address: str, is_active: bool):
-        self.id = id
+    def __init__(self, brand_id: int, name: str, address: str, is_active: bool, id: int = None):
         self.brand_id = brand_id
         self.name = name
         self.address = address
         self.is_active = is_active
+        self.id = id
 
 class Product:
-    def __init__(self, id: int, name: str, brand_id: int, category: int, purchase_price: float,
-                 base_selling_price: float, color: str, size: int, is_active: bool):
-        self.id = id
+    def __init__(self, name: str, brand_id: int, category: int, purchase_price: float,
+                 base_selling_price: float, color: str, size: int, is_active: bool, id: int = None):
+
+        # Domain validations
+        self._validate_name(name)
+        self._validate_purchase_price(purchase_price)
+        self._validate_base_selling_price(base_selling_price)
+        # Initializing fields
         self.name = name
         self.brand_id = brand_id
         self.category = category
@@ -40,9 +48,29 @@ class Product:
         self.color = color
         self.size = size
         self.is_active = is_active
+        self.id = id
+
+    def _validate_name(self, name: str) -> None | Exception:
+        if len(name) < 2:
+            raise DomainValidationError('Product name length should be greater than 2 characters')
+        if len(name) > 50:
+            raise DomainValidationError('Product name length should be less than 50 characters')
+        return None
+
+    def _validate_purchase_price(self, purchase_price: float) -> None | Exception:
+        if purchase_price <= 0:
+            raise DomainValidationError('Product purchase price should be greater than 0')
+        return None
+
+    def _validate_base_selling_price(self, base_selling_price: float) -> None | Exception:
+        if base_selling_price <= 0:
+            raise DomainValidationError('Product base selling price should be greater than 0')
+        return None
 
 class ProductCategory:
-    pass
+    def __init__(self, name: str, id: int = None):
+        self.name = name
+        self.id = id
 
 class ProductAssortment:
     def __init__(self, branch_id: int, product_id: int, is_active: bool):
