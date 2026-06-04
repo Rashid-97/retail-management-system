@@ -7,31 +7,15 @@ from app.core.exceptions import DuplicateError, DatabaseException
 from app.domain.entities.entity import Branch
 from app.domain.repositories.branch import IBranchRepository
 from app.infrastructure.database.models.branch import BranchDB
+from app.infrastructure.services.db_management import DatabaseFacade
 
 
 class BranchRepository(IBranchRepository):
-    def __init__(self, db: AsyncSession):
-        self.db = db
+    def __init__(self, db_facade: DatabaseFacade):
+        self.db_facade = db_facade
 
     async def create_branch(self, branch: Branch) -> BranchDB:
-        db_branch = BranchDB(**vars(branch))
-        try:
-            self.db.add(db_branch)
-            await self.db.commit()
-            await self.db.refresh(db_branch)
-        except IntegrityError as e:
-            await self.db.rollback()
-            if isinstance(e.orig, UniqueViolation):
-                raise DuplicateError('Branch already exists')
-            raise DatabaseException('DB error')
-
-        return db_branch
+        return await self.db_facade.save(BranchDB(**vars(branch)))
 
     async def list_branch(self) -> list[BranchDB]:
-        query = select(BranchDB).where(BranchDB.is_active.is_(True))
-
-        result = await self.db.execute(query)
-
-        branches = result.scalars().all()
-
-        return list(branches)
+        return await self.db_facade.list_active(BranchDB)
