@@ -3,3 +3,5 @@ from .brand import BrandDB
 from .product import ProductCategoryDB, ProductDB
 from .subcompany import SubCompanyDB
 from .tables_association import subcompany_brand_association_history
+from .stock import StockDB
+from .sale import SalesDB
