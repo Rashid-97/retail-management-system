@@ -1,14 +1,24 @@
+from __future__ import annotations
+
 from app.core.exceptions import DomainValidationError
 from app.infrastructure.repositories.brand_repo import BrandReassignRepository, BrandRepository
 
 
 class BrandReassignService:
-    def __init__(self,brand_reassign_repo: BrandReassignRepository,
+    def __init__(self, brand_mediator: BrandMediator):
+        self.brand_mediator = brand_mediator
+
+    async def assign(self, brand_id: int, subcompany_id: int):
+        return await self.brand_mediator.reassign(brand_id, subcompany_id)
+
+
+class BrandMediator:
+    def __init__(self, brand_reassign_repo: BrandReassignRepository,
                  brand_repo: BrandRepository):
         self.brand_reassign_repo = brand_reassign_repo
         self.brand_repo = brand_repo
 
-    async def assign(self, brand_id: int, subcompany_id: int):
+    async def reassign(self, brand_id: int, subcompany_id: int):
         brand = await self.brand_repo.get_brand_by_id(brand_id)
         await self._check_brand_subcompany_relation(subcompany_id, brand.subcompany_id)
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.application.services.brand import BrandReassignService
+from app.application.services.brand import BrandReassignService, BrandMediator
 from app.application.use_cases.brand import CreateBrandUseCase, ListBrandUseCase, ReassignBrandUseCase
 from app.domain.entities.entity import Brand
 from app.infrastructure.database.database import get_db
@@ -35,10 +35,9 @@ async def list_brands():
 async def reassign_brand(data: BrandReassignModel):
     brand_repo = BrandRepository(DbFacade())
     brand_reassign_repo = BrandReassignRepository(DbFacade())
-    brand_reassign_service = BrandReassignService(
-        brand_reassign_repo,
-        brand_repo
-    )
+
+    brand_mediator = BrandMediator(brand_reassign_repo, brand_repo)
+    brand_reassign_service = BrandReassignService(brand_mediator)
     use_case = ReassignBrandUseCase(brand_reassign_service)
     reassigned_brand = await use_case.execute(data.brand_id, data.subcompany_id)
     return {'data': reassigned_brand}
