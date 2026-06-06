@@ -24,3 +24,8 @@ class DuplicateError(AppError):
 class DatabaseException(AppError):
     status_code = 500
     detail = "Database error"
+
+
+class NotFoundException(AppError):
+    status_code = 404
+    detail = "Not found"

@@ -1,6 +1,9 @@
-from app.domain.entities.entity import Product, ProductCategory
+from app.application.services.product import CreateProductAssortmentMediator
+from app.domain.entities.entity import Product, ProductCategory, ProductAssortment
+from app.domain.repositories.branch import IBranchRepository
 from app.domain.repositories.product import IProductRepository, IProductCategoryRepository, IProductAssortmentRepository
 from app.infrastructure.database.models.product import ProductDB, ProductCategoryDB, ProductAssortmentDB
+from app.infrastructure.repositories.product_repo import ProductAssortmentRepository
 
 
 class CreateProductUseCase:
@@ -55,3 +58,11 @@ class ListProductAssortmentUseCase:
     async def execute(self) -> ProductAssortmentDB:
         list_product_assortment = await self.repo.list_assortment()
         return list_product_assortment
+
+
+class CreateProductAssortmentUseCase:
+    def __init__(self, product_assortment_mediator : CreateProductAssortmentMediator):
+        self.product_assortment_mediator = product_assortment_mediator
+
+    async def execute(self, product_assortment: ProductAssortment) -> ProductAssortmentDB:
+        return await self.product_assortment_mediator.save_assortment(product_assortment)

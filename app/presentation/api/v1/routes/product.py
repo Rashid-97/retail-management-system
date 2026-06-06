@@ -1,13 +1,17 @@
 from fastapi import APIRouter, status
 
+from app.application.services.product import CreateProductAssortmentMediator
 from app.application.use_cases.product import CreateProductUseCase, ListProductUseCase, DetailProductUseCase, \
-    ListProductCategoryUseCase, CreateProductCategoryUseCase, ListProductAssortmentUseCase
-from app.domain.entities.entity import Product, ProductCategory
+    ListProductCategoryUseCase, CreateProductCategoryUseCase, ListProductAssortmentUseCase, \
+    CreateProductAssortmentUseCase
+from app.domain.entities.entity import Product, ProductCategory, ProductAssortment
+from app.infrastructure.repositories.branch_repo import BranchRepository
 
 from app.infrastructure.repositories.product_repo import ProductRepository, ProductCategoryRepository, \
     ProductAssortmentRepository
 from app.infrastructure.services.db_management import SqlAlchemyFacade as DbFacade
-from app.presentation.api.v1.schemas.product import ProductCreateModel, ProductCategoryCreateModel
+from app.presentation.api.v1.schemas.product import ProductCreateModel, ProductCategoryCreateModel, \
+    ProductAssortmentCreateModel
 
 router = APIRouter(
     prefix="/product",
@@ -56,9 +60,23 @@ async def list_product_category():
     return {'data': product_category_list}
 
 
-@router.get("/assortments")
+@router.get("/assortment/list")
 async def get_assortments():
     assortment_repo = ProductAssortmentRepository(DbFacade())
     assortment_use_case = ListProductAssortmentUseCase(assortment_repo)
     assortments = await assortment_use_case.execute()
     return {'data': assortments}
+
+
+@router.post("/assortment/create")
+async def create_assortment(product_assortment_data: ProductAssortmentCreateModel):
+    product_assortment = ProductAssortment(**product_assortment_data.model_dump())
+
+    product_assortment_repo = ProductAssortmentRepository(DbFacade())
+    product_repo = ProductRepository(DbFacade())
+    branch_repo = BranchRepository(DbFacade())
+
+    mediator = CreateProductAssortmentMediator(product_assortment_repo, product_repo, branch_repo)
+    use_case = CreateProductAssortmentUseCase(mediator)
+    created_product_assortment = await use_case.execute(product_assortment)
+    return {'data': created_product_assortment}

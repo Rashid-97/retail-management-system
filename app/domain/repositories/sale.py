@@ -5,5 +5,5 @@ from app.domain.entities.entity import Sale
 
 class ISaleRepository(ABC):
     @abstractmethod
-    def create(self, data: Sale):
+    async def create(self, data: Sale):
         pass

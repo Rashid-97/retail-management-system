@@ -1,11 +1,13 @@
+from app.application.services.sale import SaleMediator
+from app.core.exceptions import DomainValidationError
 from app.domain.entities.entity import Sale
-from app.domain.repositories.sale import ISaleRepository
 
 
 class CreateSaleUseCase:
-    def __init__(self, repo: ISaleRepository):
-        self.repo = repo
+    def __init__(self, sale_mediator: SaleMediator):
+        self.sale_mediator = sale_mediator
 
     async def execute(self, sale: Sale):
-        # business logic check
-        self.repo.create(sale)
+        if sale.quantity < 1:
+            raise DomainValidationError('Quantity should be greater than 1')
+        return await self.sale_mediator.create_sale(sale)

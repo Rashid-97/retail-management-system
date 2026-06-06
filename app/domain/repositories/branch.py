@@ -11,3 +11,7 @@ class IBranchRepository(ABC):
     @abstractmethod
     async def list_branch(self):
         pass
+
+    @abstractmethod
+    async def detail_branch(self, id: int):
+        pass

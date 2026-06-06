@@ -2,7 +2,6 @@ from app.application.services.brand import BrandReassignService
 from app.domain.entities.entity import Brand
 from app.domain.repositories.brand import IBrandRepository
 from app.infrastructure.database.models.brand import BrandDB
-from app.infrastructure.repositories.brand_repo import BrandReassignRepository
 
 
 class CreateBrandUseCase:

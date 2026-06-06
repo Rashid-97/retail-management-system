@@ -14,3 +14,9 @@ class ProductCreateModel(BaseModel):
 
 class ProductCategoryCreateModel(BaseModel):
     name: str
+
+
+class ProductAssortmentCreateModel(BaseModel):
+    product_id: int
+    branch_id: int
+    is_active: bool = True

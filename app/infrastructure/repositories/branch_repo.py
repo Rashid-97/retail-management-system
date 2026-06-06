@@ -19,3 +19,6 @@ class BranchRepository(IBranchRepository):
 
     async def list_branch(self) -> list[BranchDB]:
         return await self.db_facade.list_active(BranchDB)
+
+    async def detail_branch(self, id: int) -> list[BranchDB]:
+        return await self.db_facade.get_by_id(BranchDB, id)

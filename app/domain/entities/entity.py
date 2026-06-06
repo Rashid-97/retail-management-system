@@ -84,10 +84,10 @@ class Stock:
         self.product_id = product_id
         self.quantity = quantity
 
-class Sales:
-    def __init__(self, branch_id: int, product_id: int, quantity: int, date_time: datetime,
-                 discounted_selling_price: float, discounted_percentage: float, employee_id: int, customer_id: int,
-                 id: int = None):
+class Sale:
+    def __init__(self, branch_id: int, product_id: int, quantity: int, discounted_selling_price: float,
+                 discounted_percentage: float, employee_id: int, customer_id: int,
+                 id: int = None, date_time: datetime = None):
         self.branch_id = branch_id
         self.product_id = product_id
         self.quantity = quantity
@@ -125,7 +125,4 @@ class Discount:
         self.excluded_products = excluded_products
 
 class Bonus:
-    pass
-
-class Sale:
     pass

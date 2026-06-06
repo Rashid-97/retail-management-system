@@ -27,7 +27,7 @@ class DatabaseFacade(ABC):
         pass
 
     @abstractmethod
-    async def update(self, db_model_instance: type[Base], where_data: dict, values: dict):
+    async def update(self, db_model_instance: type[Base], id: int, values: dict):
         pass
 
     @abstractmethod
@@ -36,6 +36,10 @@ class DatabaseFacade(ABC):
 
     @abstractmethod
     async def commit(self):
+        pass
+
+    @abstractmethod
+    async def get_one(self, db_model_instance: type[Base], where_data: dict):
         pass
 
 
@@ -48,13 +52,12 @@ class SqlAlchemyFacade(DatabaseFacade):
             self.db.add(db_model_instance)
             await self.db.commit()
             await self.db.refresh(db_model_instance)
+            return db_model_instance
         except IntegrityError as e:
             await self.db.rollback()
             if isinstance(e.orig, UniqueViolation):
                 raise DuplicateError('This element already exists')
             raise DatabaseException('DB error')
-
-        return db_model_instance
 
     async def list(self, db_model_instance: type[Base]):
         query = select(db_model_instance)
@@ -94,3 +97,15 @@ class SqlAlchemyFacade(DatabaseFacade):
 
     async def commit(self):
         await self.db.commit()
+
+    async def get_one(self, db_model_instance: type[Base], where_data: dict):
+        query = select(db_model_instance)
+
+        for key, value in where_data.items():
+            query = query.where(
+                getattr(db_model_instance, key) == value
+            )
+
+        result = await self.db.execute(query)
+
+        return result.scalar_one()
