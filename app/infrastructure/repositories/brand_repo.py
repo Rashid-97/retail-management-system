@@ -1,9 +1,3 @@
-from psycopg.errors import UniqueViolation
-from sqlalchemy import select, update, insert
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.core.exceptions import DuplicateError, DatabaseException
 from app.domain.entities.entity import Brand
 from app.domain.repositories.brand import IBrandRepository
 from app.infrastructure.database.models import subcompany_brand_association_history
@@ -23,14 +17,6 @@ class BrandRepository(IBrandRepository):
 
     async def get_brand_by_id(self, brand_id: int) -> BrandDB:
         return await self.db_facade.get_by_id(BrandDB, brand_id)
-        brand_query = select(BrandDB).where(BrandDB.id == brand_id)
-        brand_result = await self.db.execute(brand_query)
-        brand = brand_result.scalar_one_or_none()
-
-        if not brand:
-            raise DatabaseException('This brand doesn\'t exist')
-
-        return brand
 
 
 class BrandReassignRepository:
