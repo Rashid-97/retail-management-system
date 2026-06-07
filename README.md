@@ -103,7 +103,7 @@ Successful sales automatically decrease stock quantities.
 
 ---
 
-# 🏗️  Architecture
+# Architecture
 
 The project follows **Clean Architecture**.
 
@@ -185,7 +185,7 @@ flowchart TD
 
 ---
 
-# ⚙️  Technology Stack
+# Technology Stack
 
 | Category         | Technology         |
 | ---------------- | ------------------ |
