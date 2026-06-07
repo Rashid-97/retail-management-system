@@ -103,7 +103,7 @@ Successful sales automatically decrease stock quantities.
 
 ---
 
-# Architecture
+# 🏗️ Architecture
 
 The project follows **Clean Architecture**.
 
