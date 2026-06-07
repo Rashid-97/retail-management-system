@@ -185,7 +185,7 @@ flowchart TD
 
 ---
 
-# Technology Stack
+# ⚙️ Technology Stack
 
 | Category         | Technology         |
 | ---------------- | ------------------ |
