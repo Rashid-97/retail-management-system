@@ -131,18 +131,87 @@ Infrastructure Layer
 
 # 🎨 Design Patterns
 
-### Strategy Pattern
+The project utilizes several well-established design patterns to improve maintainability, extensibility, and separation of concerns.
 
-Used to encapsulate interchangeable business behaviors and validation logic.
+---
 
-### Facade Pattern
+## Repository Pattern
 
-Used to simplify database interactions and infrastructure operations.
+Used to abstract data access logic from the application and domain layers.
 
-### Mediator Pattern
+```text
+IProductRepository
+        ▲
+        │
+ProductRepository
 
-Used to coordinate communication between application components while reducing coupling.
+IBrandRepository
+        ▲
+        │
+BrandRepository
 
+IStockRepository
+        ▲
+        │
+StockRepository
+```
+
+Benefits:
+
+- Decouples business logic from database implementation
+- Improves testability
+- Simplifies repository replacement or extension
+
+---
+
+## Facade Pattern
+
+Used to provide a simplified interface over SQLAlchemy database operations.
+
+```text
+Application Service
+        │
+        ▼
+DatabaseFacade
+        ▲
+        │
+SqlAlchemyFacade
+        │
+ ┌──────┼───────────────┐
+ │      │               │
+save() update() get()
+```
+
+Benefits:
+
+- Centralizes database interaction logic
+- Reduces code duplication
+- Simplifies repository implementations
+
+---
+
+## Mediator Pattern
+
+Used to coordinate complex operations involving multiple repositories and business rules.
+
+```text
+CreateSaleUseCase
+        │
+        ▼
+   SaleMediator
+        │
+ ┌──────┼──────────────┬─────────────┐
+ │      │             │             │
+ ▼      ▼             ▼             ▼
+Product Brand      Stock         Sale
+ Repo    Repo       Repo         Repo
+```
+
+Benefits:
+
+- Reduces direct dependencies between components
+- Centralizes workflow coordination
+- Improves maintainability of complex business operations
 ---
 
 # 🧩 Domain Model
